@@ -1,99 +1,90 @@
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
-  Box,
-  DialogTitle,
   DialogContent,
-  TextField,
+  DialogTitle,
   DialogActions,
+  TextField,
   Button,
 } from "@mui/material";
-import { useForm, Controller } from "react-hook-form";
+import { Mozo } from "../services/mozosService";
 
-type MozoFormModalProps = {
+type MozoFormModalPropTypes = {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: { nombre: string; apellido: string }) => void;
-  defaultValues?: { nombre: string; apellido: string };
+  hanldeSubmit: ({
+    nombre,
+    apellido,
+  }: {
+    nombre: string;
+    apellido: string;
+  }) => void;
+
+  selectedMozo: Mozo | null;
 };
 
 const MozoFormModal = ({
   open,
   onClose,
-  onSubmit,
-  defaultValues = { nombre: "", apellido: "" },
-}: MozoFormModalProps) => {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm({ defaultValues });
+  hanldeSubmit,
+  selectedMozo,
+}: MozoFormModalPropTypes) => {
+  const [nombre, setNombre] = useState<string>("");
+  const [apellido, setApellido] = useState<string>("");
 
-  const handleFormSubmit = (data: { nombre: string; apellido: string }) => {
-    onSubmit(data);
+  useEffect(() => {
+    if (open) {
+      setNombre(selectedMozo?.nombre || "");
+      setApellido(selectedMozo?.apellido || "");
+    }
+  }, [selectedMozo, open]);
+
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    hanldeSubmit({ nombre, apellido });
     onClose();
-    reset();
   };
 
   return (
     <Dialog
       open={open}
-      onClose={() => {
-        onClose();
-        reset();
+      onClose={onClose}
+      PaperProps={{
+        component: "form",
+        onSubmit: handleFormSubmit,
       }}
     >
-      <DialogTitle>
-        {defaultValues.nombre ? "Editar Mozo" : "Agregar Mozo"}
-      </DialogTitle>
+      <DialogTitle>{selectedMozo ? "Editar" : "Agregar"}</DialogTitle>
 
       <DialogContent>
-        <Box component="form" onSubmit={handleSubmit(handleFormSubmit)}>
-          <Controller
-            name="nombre"
-            control={control}
-            rules={{ required: "Nombre Obligatorio" }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Nombre"
-                margin="normal"
-                fullWidth
-                error={!!errors.nombre}
-                helperText={errors.nombre?.message}
-              />
-            )}
-          />
-          <Controller
-            name="apellido"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Apellido"
-                margin="normal"
-                fullWidth
-                error={!!errors.apellido}
-                helperText={errors.apellido?.message}
-              />
-            )}
-          />
-          <DialogActions>
-            <Button
-              onClick={() => {
-                onClose();
-                reset();
-              }}
-              color="secondary"
-            >
-              Cancelar
-            </Button>
-            <Button type="submit" color="primary">
-              {defaultValues.nombre ? "Guardar Cambios" : "Agregar"}
-            </Button>
-          </DialogActions>
-        </Box>
+        <TextField
+          autoFocus
+          required
+          margin="dense"
+          id="nombre"
+          label="Nombre"
+          type="text"
+          fullWidth
+          variant="outlined"
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+        />
+        <TextField
+          margin="dense"
+          id="apellido"
+          label="Apellido"
+          type="text"
+          fullWidth
+          variant="outlined"
+          value={apellido}
+          onChange={(e) => setApellido(e.target.value)}
+        />
       </DialogContent>
+
+      <DialogActions>
+        <Button onClick={onClose}>Cancelar</Button>
+        <Button type="submit">Guardar</Button>
+      </DialogActions>
     </Dialog>
   );
 };

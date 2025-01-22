@@ -24,7 +24,7 @@ import { Bebida } from "../services/bebidasService";
 import BebidaFormModal from "./BebidaFormModal";
 
 const BebidasPage = () => {
-  const [bebidas, setBebidas] = useState<any[]>([]);
+  const [bebidas, setBebidas] = useState<Bebida[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBebida, setSelectedBebida] = useState<Bebida | null>(null);
 
@@ -36,7 +36,7 @@ const BebidasPage = () => {
 
   const handleDeleteBebida = async (id: string) => {
     await deleteBebida(id);
-    setBebidas(bebidas.filter((bebida) => bebida.id !== id));
+    getBebidas().then((data) => setBebidas(data));
   };
 
   const handleOpenModal = (bebida?: Bebida) => {
@@ -46,7 +46,6 @@ const BebidasPage = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedBebida(null);
   };
 
   const handleAddOrEditBebida = async (data: BebidaInput) => {
@@ -72,20 +71,22 @@ const BebidasPage = () => {
           handleOpenModal();
         }}
         color="primary"
+        sx={{ marginBottom: 3 }}
       >
-        <AddCircleOutlinedIcon sx={{ fontSize: 40, marginBottom: 3 }} />
+        <AddCircleOutlinedIcon sx={{ fontSize: 40 }} />
       </IconButton>
       <Box>
         <Table
           size="small"
           sx={{
-            border: 1,
-            borderColor: "GrayText",
-            borderWidth: 1,
+            border: 1.5,
             maxWidth: "50%",
+            borderRadius: 1,
+            borderCollapse: "separate",
+            overflow: "hidden",
           }}
         >
-          <TableHead>
+          <TableHead sx={{ background: "#2c3138" }}>
             <TableRow>
               <TableCell>Nombre</TableCell>
               <TableCell>Precio</TableCell>
@@ -122,8 +123,8 @@ const BebidasPage = () => {
       <BebidaFormModal
         open={isModalOpen}
         onClose={handleCloseModal}
-        onSubmit={handleAddOrEditBebida}
-        defaultValues={selectedBebida || undefined}
+        hanldeSubmit={handleAddOrEditBebida}
+        selectedBebida={selectedBebida}
       />
     </Box>
   );

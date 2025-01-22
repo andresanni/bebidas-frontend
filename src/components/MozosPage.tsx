@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import {
@@ -19,15 +20,13 @@ import {
   updateMozo,
   createMozo,
 } from "../services/mozosService";
-import { Mozo } from "../services/mozosService";
+import { Mozo, MozoInput } from "../services/mozosService";
 import MozoFormModal from "./MozoFormModal";
 
 const MozosPage = () => {
-  const [mozos, setMozos] = useState<any[]>([]);
+  const [mozos, setMozos] = useState<Mozo[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMozo, setSelectedMozo] = useState<Mozo | null>(null);
-
-  console.log("selectedMozo", selectedMozo);
 
   useEffect(() => {
     getMozos().then((data) => {
@@ -37,7 +36,7 @@ const MozosPage = () => {
 
   const handleDeleteMozo = async (id: string) => {
     await deleteMozo(id);
-    setMozos(mozos.filter((mozo) => mozo.id !== id));
+    getMozos().then((data) => setMozos(data));
   };
 
   const handleOpenModal = (mozo?: Mozo) => {
@@ -47,13 +46,9 @@ const MozosPage = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedMozo(null);
   };
 
-  const handleAddOrEditMozo = async (data: {
-    nombre: string;
-    apellido: string;
-  }) => {
+  const handleAddOrEditMozo = async (data: MozoInput) => {
     if (selectedMozo) {
       await updateMozo({ ...selectedMozo, ...data });
     } else {
@@ -76,20 +71,22 @@ const MozosPage = () => {
           handleOpenModal();
         }}
         color="primary"
+        sx={{ marginBottom: 3 }}
       >
-        <PersonAddAlt1Icon sx={{ fontSize: 40, marginBottom: 3 }} />
+        <PersonAddAlt1Icon sx={{ fontSize: 40 }} />
       </IconButton>
       <Box>
         <Table
           size="small"
           sx={{
-            border: 1,
-            borderColor: "GrayText",
-            borderWidth: 1,
+            border: 1.5,
             maxWidth: "50%",
+            borderRadius: 1,
+            borderCollapse: "separate",
+            overflow: "hidden",
           }}
         >
-          <TableHead>
+          <TableHead sx={{ background: "#2c3138" }}>
             <TableRow>
               <TableCell>Nombre</TableCell>
               <TableCell>Apellido</TableCell>
@@ -126,8 +123,8 @@ const MozosPage = () => {
       <MozoFormModal
         open={isModalOpen}
         onClose={handleCloseModal}
-        onSubmit={handleAddOrEditMozo}
-        defaultValues={selectedMozo || undefined}
+        hanldeSubmit={handleAddOrEditMozo}
+        selectedMozo={selectedMozo}
       />
     </Box>
   );

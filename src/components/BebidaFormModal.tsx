@@ -1,99 +1,90 @@
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
-  Box,
-  DialogTitle,
   DialogContent,
-  TextField,
+  DialogTitle,
   DialogActions,
+  TextField,
   Button,
 } from "@mui/material";
-import { useForm, Controller } from "react-hook-form";
+import { Bebida } from "../services/bebidasService";
 
-type BebidaFormModalProps = {
+type BebidaFormModalPropTypes = {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: { nombre: string; precio: number }) => void;
-  defaultValues?: { nombre: string; precio: number };
+  hanldeSubmit: ({
+    nombre,
+    precio,
+  }: {
+    nombre: string;
+    precio: number;
+  }) => void;
+
+  selectedBebida: Bebida | null;
 };
 
 const BebidaFormModal = ({
   open,
   onClose,
-  onSubmit,
-  defaultValues = { nombre: "", precio: 0 },
-}: BebidaFormModalProps) => {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm({ defaultValues });
+  hanldeSubmit,
+  selectedBebida,
+}: BebidaFormModalPropTypes) => {
+  const [nombre, setNombre] = useState<string>("");
+  const [precio, setPrecio] = useState<string>("");
 
-  const handleFormSubmit = (data: { nombre: string; precio: number }) => {
-    onSubmit(data);
+  useEffect(() => {
+    if (open) {
+      setNombre(selectedBebida?.nombre || "");
+      setPrecio(selectedBebida?.precio?.toString() || "");
+    }
+  }, [selectedBebida, open]);
+
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    hanldeSubmit({ nombre, precio: parseFloat(precio) || 0 });
     onClose();
-    reset();
   };
 
   return (
     <Dialog
       open={open}
-      onClose={() => {
-        onClose();
-        reset();
+      onClose={onClose}
+      PaperProps={{
+        component: "form",
+        onSubmit: handleFormSubmit,
       }}
     >
-      <DialogTitle>
-        {defaultValues.nombre ? "Editar Bebida" : "Agregar Bebida"}
-      </DialogTitle>
+      <DialogTitle>{selectedBebida ? "Editar" : "Agregar"}</DialogTitle>
 
       <DialogContent>
-        <Box component="form" onSubmit={handleSubmit(handleFormSubmit)}>
-          <Controller
-            name="nombre"
-            control={control}
-            rules={{ required: "Nombre Obligatorio" }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Nombre"
-                margin="normal"
-                fullWidth
-                error={!!errors.nombre}
-                helperText={errors.nombre?.message}
-              />
-            )}
-          />
-          <Controller
-            name="precio"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Precio"
-                margin="normal"
-                fullWidth
-                error={!!errors.precio}
-                helperText={errors.precio?.message}
-              />
-            )}
-          />
-          <DialogActions>
-            <Button
-              onClick={() => {
-                onClose();
-                reset();
-              }}
-              color="secondary"
-            >
-              Cancelar
-            </Button>
-            <Button type="submit" color="primary">
-              {defaultValues.nombre ? "Guardar Cambios" : "Agregar"}
-            </Button>
-          </DialogActions>
-        </Box>
+        <TextField
+          autoFocus
+          required
+          margin="dense"
+          id="nombre"
+          label="Nombre"
+          type="text"
+          fullWidth
+          variant="outlined"
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+        />
+        <TextField
+          margin="dense"
+          id="precio"
+          label="Precio"
+          type="text"
+          fullWidth
+          variant="outlined"
+          value={precio}
+          onChange={(e) => setPrecio(e.target.value)}
+        />
       </DialogContent>
+
+      <DialogActions>
+        <Button onClick={onClose}>Cancelar</Button>
+        <Button type="submit">Guardar</Button>
+      </DialogActions>
     </Dialog>
   );
 };
