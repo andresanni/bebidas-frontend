@@ -1,4 +1,3 @@
-import { blue } from "@mui/material/colors";
 import { createTheme } from "@mui/material/styles";
 
 export const theme = createTheme({
@@ -16,7 +15,7 @@ export const theme = createTheme({
     MuiTableCell: {
       styleOverrides: {
         root: {
-          fontSize: 20,
+          fontSize: 18,
         },
       },
     },

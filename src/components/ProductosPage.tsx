@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import {
   Table,
@@ -23,7 +22,7 @@ import {
 import { Bebida } from "../services/bebidasService";
 import BebidaFormModal from "./BebidaFormModal";
 
-const BebidasPage = () => {
+const ProductosPage = () => {
   const [bebidas, setBebidas] = useState<Bebida[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBebida, setSelectedBebida] = useState<Bebida | null>(null);
@@ -64,7 +63,7 @@ const BebidasPage = () => {
   return (
     <Box margin={2}>
       <Typography variant="h3" fontWeight="bold" gutterBottom>
-        Bebidas
+        Productos
       </Typography>
       <IconButton
         onClick={() => {
@@ -130,4 +129,4 @@ const BebidasPage = () => {
   );
 };
 
-export default BebidasPage;
+export default ProductosPage;
