@@ -20,7 +20,7 @@ import {
   BebidaInput,
 } from "../services/bebidasService";
 import { Bebida } from "../services/bebidasService";
-import BebidaFormModal from "./BebidaFormModal";
+import ProductosFormModal from "./ProductosFormModal";
 
 const ProductosPage = () => {
   const [bebidas, setBebidas] = useState<Bebida[]>([]);
@@ -119,7 +119,7 @@ const ProductosPage = () => {
         </Table>
       </Box>
 
-      <BebidaFormModal
+      <ProductosFormModal
         open={isModalOpen}
         onClose={handleCloseModal}
         hanldeSubmit={handleAddOrEditBebida}

@@ -48,7 +48,7 @@ const Sidebar = () => {
               <ListItemText
                 primary="Bebidas"
                 disableTypography={true}
-                sx={{ fontSize: 20, fontWeight: "bold" }}
+                sx={{ fontSize: 20, fontWeight: "bold", color: "white" }}
               />
               {open ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>

@@ -1,18 +1,16 @@
 import { supabase } from "../supabaseClient";
+import { Mozo, MozoInput } from "../types";
 
-export type Mozo = {
-  id: string;
-  nombre: string;
-  apellido: string;
-};
+export const getMozos = async (options?: {
+  signal?: AbortSignal;
+}): Promise<Mozo[]> => {
+  const query = supabase.from("mozos").select("*");
+  if (options?.signal) {
+    query.abortSignal(options.signal);
+  }
 
-export type MozoInput = {
-  nombre: string;
-  apellido: string;
-};
+  const { data, error } = await query;
 
-export const getMozos = async (): Promise<Mozo[]> => {
-  const { data, error } = await supabase.from("mozos").select("*");
   if (error) {
     throw error;
   }

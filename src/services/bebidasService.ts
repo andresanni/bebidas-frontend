@@ -1,18 +1,16 @@
 import { supabase } from "../supabaseClient";
+import { Bebida, BebidaInput } from "../types";
 
-export type Bebida = {
-  id: string;
-  nombre: string;
-  precio: number;
-};
+export const getBebidas = async (options?: {
+  signal?: AbortSignal;
+}): Promise<Bebida[]> => {
+  const query = supabase.from("bebidas").select("*");
 
-export type BebidaInput = {
-  nombre: string;
-  precio: number;
-};
+  if (options?.signal) {
+    query.abortSignal(options.signal);
+  }
 
-export const getBebidas = async (): Promise<Bebida[]> => {
-  const { data, error } = await supabase.from("bebidas").select("*");
+  const { data, error } = await query;
   if (error) {
     throw error;
   }
